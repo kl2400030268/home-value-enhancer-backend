@@ -1,0 +1,1 @@
+package com.property.management.repository;
