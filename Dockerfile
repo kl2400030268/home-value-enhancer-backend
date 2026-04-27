@@ -1,10 +1,17 @@
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:17-jdk AS build
 
 WORKDIR /app
 
 COPY . .
 
 RUN chmod +x mvnw
-RUN ./mvnw clean install -DskipTests
+RUN ./mvnw clean package -DskipTests
 
-CMD ["java", "-jar", "target/*.jar"]
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+
+# Copy the generated Spring Boot jar with a deterministic name.
+COPY --from=build /app/target/*.jar /app/app.jar
+
+CMD ["java", "-jar", "/app/app.jar"]
